@@ -1,0 +1,499 @@
+/* ================================================================
+   CSS VARIABLES — define colours and fonts once, reuse everywhere
+   ================================================================ */
+:root {
+  --dock-bg:       rgba(255,255,255,0.18);
+  --window-bg:     #1e1e1e;
+  --titlebar-bg:   #2d2d2d;
+  --sidebar-bg:    #1a1a1a;
+  --content-bg:    #1c1c1e;
+  --accent-blue:   #0057d8;
+  --border-subtle: rgba(255,255,255,0.10);
+  --border-medium: rgba(255,255,255,0.22);
+  --font: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* ================================================================
+   RESET — strip browser defaults
+   ================================================================ */
+* {
+  box-sizing: border-box; /* padding/border included in width/height */
+  margin: 0;
+  padding: 0;
+  user-select: none; /* no text selection — feels like a real OS */
+}
+body {
+  font-family: var(--font);
+  overflow: hidden; /* no page scrolling */
+}
+
+/* ================================================================
+   DESKTOP
+   Full-screen container with the macOS Big Sur wallpaper gradient.
+   If bg.png exists in your img/ folder it overrides the gradient.
+   ================================================================ */
+#desktop {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  /* macOS Big Sur gradient fallback — orange/red to sky blue */
+  background:
+    url('img/bg.png') center/cover no-repeat,
+    linear-gradient(135deg,
+      #c8410a 0%,
+      #d95f20 20%,
+      #e07030 40%,
+      #d4894a 60%,
+      #b8c8d8 80%,
+      #7aaac8 100%
+    );
+}
+
+/* ================================================================
+   MENU BAR
+   ================================================================ */
+#menubar {
+  position: relative;
+  z-index: 200;
+  height: 26px;
+  width: 100%;
+  background: rgba(20,20,20,0.60);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 0.5px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  color: #fff;
+  font-size: 13px;
+}
+#menubar .menu-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+#menubar .menu-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+#apple-logo { font-size: 15px; font-weight: 700; }
+.menu-item {
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.menu-item:hover { background: rgba(255,255,255,0.15); }
+.menu-item.active-app { font-weight: 700; }
+.menu-icon { opacity: 0.85; }
+#clock { font-size: 12px; font-weight: 600; letter-spacing: 0.3px; }
+
+/* ================================================================
+   DESKTOP ICONS  (top-right corner)
+   ================================================================ */
+#desktop-icons {
+  position: absolute;
+  top: 36px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+.desktop-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 76px;
+  transition: background 0.15s;
+}
+.desktop-icon:hover   { background: rgba(255,255,255,0.18); }
+.desktop-icon.selected{ background: rgba(0,87,216,0.40); }
+
+/* Icon image — tries img/; falls back to emoji via JS */
+.desktop-icon .d-img {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+}
+/* Emoji fallback */
+.desktop-icon .d-emoji {
+  font-size: 44px;
+  line-height: 52px;
+  text-align: center;
+}
+.desktop-icon span.d-label {
+  font-size: 11px;
+  color: #fff;
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.85), 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* ================================================================
+   WINDOWS  (shared styles for every floating window)
+   ================================================================ */
+.window {
+  position: absolute;
+  background: var(--window-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 50;
+  min-width: 320px;
+  box-shadow: 0 22px 55px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.30);
+  transition: box-shadow 0.2s;
+}
+.window.focused {
+  box-shadow: 0 30px 75px rgba(0,0,0,0.70), 0 2px 8px rgba(0,0,0,0.40);
+  z-index: 60;
+}
+.window.hidden { display: none; }
+
+/* ---- Title bar ---- */
+.win-titlebar {
+  height: 38px;
+  background: var(--titlebar-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 8px;
+  cursor: move;
+  border-bottom: 0.5px solid var(--border-subtle);
+}
+.win-title {
+  flex: 1;
+  text-align: center;
+  font-size: 13px;
+  color: #ccc;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* ---- Traffic-light buttons ---- */
+.win-btn {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: filter 0.1s;
+  border: none;
+}
+.btn-close    { background: #ff5f57; }
+.btn-minimize { background: #ffbd2e; }
+.btn-maximize { background: #28c840; }
+.win-btn:hover { filter: brightness(0.82); }
+
+/* Tiny ✕ − + symbols appear on hover */
+.win-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 900;
+  color: rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+.btn-close::after    { content: '✕'; }
+.btn-minimize::after { content: '−'; }
+.btn-maximize::after { content: '+'; }
+.win-titlebar:hover .win-btn::after { opacity: 1; }
+
+/* ================================================================
+   FINDER LAYOUT  (sidebar + content, side by side)
+   ================================================================ */
+.finder-layout {
+  display: flex;
+  height: calc(100% - 38px); /* full window minus title bar */
+}
+
+/* ---- Sidebar ---- */
+.finder-sidebar {
+  width: 162px;
+  background: var(--sidebar-bg);
+  padding: 10px 0;
+  flex-shrink: 0;
+  border-right: 0.5px solid #2e2e2e;
+  overflow-y: auto;
+}
+.sidebar-section-label {
+  font-size: 10px;
+  color: #555;
+  font-weight: 700;
+  padding: 8px 14px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  font-size: 12.5px;
+  color: #bbb;
+  cursor: pointer;
+  border-radius: 6px;
+  margin: 1px 5px;
+  transition: background 0.12s;
+  font-weight: 500;
+}
+.sidebar-item:hover  { background: rgba(255,255,255,0.07); }
+.sidebar-item.active { background: var(--accent-blue); color: #fff; }
+.sidebar-icon { font-size: 13px; }
+
+/* ---- Content area ---- */
+.finder-content {
+  flex: 1;
+  padding: 14px;
+  background: var(--content-bg);
+  overflow-y: auto;
+}
+.finder-toolbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid #2e2e2e;
+  font-size: 12px;
+  color: #888;
+}
+#breadcrumb { color: #ccc; font-weight: 600; font-size: 13px; }
+
+/* ---- File grid ---- */
+.file-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
+  /* Creates as many columns as fit; each column min 82px wide */
+  gap: 8px;
+}
+.file-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.file-item:hover    { background: rgba(255,255,255,0.07); }
+.file-item.selected { background: rgba(0,87,216,0.38); }
+
+/* File icon — emoji shown in a box */
+.file-icon {
+  width: 46px;
+  height: 46px;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* If you later add real icons via <img>, they'll also use this size */
+}
+.file-icon img {
+  width: 46px;
+  height: 46px;
+  object-fit: contain;
+}
+.file-item span {
+  font-size: 11px;
+  color: #ddd;
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+/* Resize handle (bottom-right corner) */
+.resize-handle {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 16px; height: 16px;
+  cursor: se-resize;
+  background: linear-gradient(135deg, transparent 50%, rgba(255,255,255,0.12) 50%);
+  border-radius: 0 0 12px 0;
+}
+
+/* ================================================================
+   DOCK
+   ================================================================ */
+#dock {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: var(--dock-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 0.5px solid var(--border-medium);
+  border-radius: 20px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 7px 10px 4px;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+}
+.dock-separator {
+  width: 0.5px;
+  height: 42px;
+  background: rgba(255,255,255,0.28);
+  margin: 0 3px;
+  align-self: center;
+}
+.dock-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* ---- Dock icon image ---- */
+.dock-item .dock-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 11px;
+  display: block;
+  transition: transform 0.18s ease;
+}
+/* ---- Emoji fallback for dock icons ---- */
+.dock-item .dock-emoji {
+  width: 50px;
+  height: 50px;
+  font-size: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  transition: transform 0.18s ease;
+}
+
+/* Hover: icon grows and lifts */
+.dock-item:hover .dock-img,
+.dock-item:hover .dock-emoji {
+  transform: scale(1.4) translateY(-14px);
+}
+
+/* Tooltip */
+.dock-tooltip {
+  position: absolute;
+  bottom: 66px;
+  background: rgba(28,28,28,0.88);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.15s, transform 0.15s;
+  border: 0.5px solid rgba(255,255,255,0.15);
+  z-index: 200;
+}
+.dock-item:hover .dock-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Running indicator dot */
+.dock-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.75);
+  margin-top: 3px;
+  margin-bottom: 1px;
+}
+
+/* ================================================================
+   CONTEXT MENU
+   ================================================================ */
+#context-menu {
+  position: fixed;
+  background: rgba(38,38,38,0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 0.5px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  padding: 5px;
+  min-width: 188px;
+  z-index: 999;
+  display: none;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+.context-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-weight: 500;
+}
+.context-item:hover { background: var(--accent-blue); color: #fff; }
+.context-separator  { height: 0.5px; background: rgba(255,255,255,0.12); margin: 4px 0; }
+
+/* ================================================================
+   NOTIFICATIONS
+   ================================================================ */
+#notification-container {
+  position: fixed;
+  top: 34px;
+  right: 12px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.notification {
+  background: rgba(38,38,38,0.92);
+  backdrop-filter: blur(14px);
+  border: 0.5px solid rgba(255,255,255,0.14);
+  border-radius: 12px;
+  padding: 12px 14px;
+  width: 288px;
+  color: #fff;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  cursor: pointer;
+  animation: slideIn 0.28s ease;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(110%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.notif-icon { font-size: 28px; flex-shrink: 0; }
+.notif-title { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+.notif-text  { font-size: 12px; color: #aaa; }
+
+/* ================================================================
+   SCROLLBARS
+   ================================================================ */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.32); }

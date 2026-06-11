@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>macOS Desktop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="desktop">
+
+    <!-- MENU BAR -->
+    <div id="menubar">
+      <div class="menu-left">
+        <span id="apple-logo">&#63743;</span>
+        <span class="menu-item active-app">Finder</span>
+        <span class="menu-item">File</span>
+        <span class="menu-item">Edit</span>
+        <span class="menu-item">View</span>
+        <span class="menu-item">Go</span>
+        <span class="menu-item">Window</span>
+        <span class="menu-item">Help</span>
+      </div>
+      <div class="menu-right">
+        <span class="menu-icon">&#9650;</span>
+        <span class="menu-icon">&#9646;&#9646;</span>
+        <span id="clock">Mon 1 Jan 00:00</span>
+      </div>
+    </div>
+
+    <!-- DESKTOP ICONS (top-right) -->
+    <div id="desktop-icons"></div>
+
+    <!-- FINDER WINDOW -->
+    <div class="window" id="finder-window" style="top:50px; left:60px; width:590px; height:440px;">
+      <div class="win-titlebar" id="finder-titlebar">
+        <div class="win-btn btn-close"    onclick="closeWindow('finder-window')"    title="Close"></div>
+        <div class="win-btn btn-minimize" onclick="minimizeWindow('finder-window')" title="Minimize"></div>
+        <div class="win-btn btn-maximize" onclick="maximizeWindow('finder-window')" title="Maximize"></div>
+        <div class="win-title" id="finder-title">Finder — Home</div>
+      </div>
+      <div class="finder-layout">
+        <div class="finder-sidebar" id="finder-sidebar">
+          <div class="sidebar-section-label">Favourites</div>
+          <div class="sidebar-item active" data-path="home"       onclick="navigateTo(this,'Home')">
+            <span class="sidebar-icon">🏠</span> Home
+          </div>
+          <div class="sidebar-item" data-path="desktop"    onclick="navigateTo(this,'Desktop')">
+            <span class="sidebar-icon">🖥️</span> Desktop
+          </div>
+          <div class="sidebar-item" data-path="documents"  onclick="navigateTo(this,'Documents')">
+            <span class="sidebar-icon">📄</span> Documents
+          </div>
+          <div class="sidebar-item" data-path="downloads"  onclick="navigateTo(this,'Downloads')">
+            <span class="sidebar-icon">⬇️</span> Downloads
+          </div>
+          <div class="sidebar-section-label">Locations</div>
+          <div class="sidebar-item" data-path="macintosh"  onclick="navigateTo(this,'Macintosh HD')">
+            <span class="sidebar-icon">💻</span> Macintosh HD
+          </div>
+          <div class="sidebar-item" data-path="icloud"     onclick="navigateTo(this,'iCloud Drive')">
+            <span class="sidebar-icon">☁️</span> iCloud Drive
+          </div>
+          <div class="sidebar-item"                        onclick="navigateTo(this,'Network')">
+            <span class="sidebar-icon">🌐</span> Network
+          </div>
+        </div>
+        <div class="finder-content">
+          <div class="finder-toolbar">
+            <span id="breadcrumb">Home</span>
+          </div>
+          <div class="file-grid" id="file-grid"></div>
+        </div>
+      </div>
+      <div class="resize-handle" id="finder-resize"></div>
+    </div>
+
+    <!-- DOCK -->
+    <div id="dock"></div>
+
+    <!-- RIGHT-CLICK CONTEXT MENU -->
+    <div id="context-menu">
+      <div class="context-item" onclick="showNotification('Finder','Opening new Finder window…','🔵')">📁 New Finder Window</div>
+      <div class="context-item">🖼️ Change Wallpaper</div>
+      <div class="context-separator"></div>
+      <div class="context-item">⚙️ System Preferences</div>
+      <div class="context-item" onclick="showNotification('Desktop','Getting info…','ℹ️')">ℹ️ Get Info</div>
+      <div class="context-separator"></div>
+      <div class="context-item">🔃 Sort By</div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div id="notification-container"></div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
